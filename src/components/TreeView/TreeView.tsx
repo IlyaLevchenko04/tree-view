@@ -6,13 +6,7 @@ import { Tree } from './components/Tree/Tree';
 export const TreeView: React.FC = () => {
   const [isTriggerOpen, setIsTriggerOpen] = useState(false);
   const firstDeep = Object.keys(DEFAULT_DATA);
-  const idArr: any[] = [];
 
-  for (const key in DEFAULT_DATA) {
-    idArr.push(`obj.${key}`);
-  }
-
-  console.log(idArr);
   const onTriggerClick = (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -24,10 +18,14 @@ export const TreeView: React.FC = () => {
       <h2 onClick={onTriggerClick}>Trigger</h2>
       {isTriggerOpen && (
         <Tree data={DEFAULT_DATA}>
-          {firstDeep.map((item) => (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            <Branch key={item} id={item} item={DEFAULT_DATA[item]} />
+          {firstDeep.map((item: string) => (
+            <Branch
+              key={`obj.${item}`}
+              id={`obj.${item}`}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              item={DEFAULT_DATA[item]}
+            />
           ))}
         </Tree>
       )}
