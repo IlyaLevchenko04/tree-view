@@ -1,57 +1,72 @@
-import React from 'react';
-import { JustText } from '../Branch/JustText';
+import React, { useState } from 'react';
+import { CaretDownOutlined } from '@ant-design/icons';
+import { List } from '../../../List/List';
 
-const primitivesArray = [null, undefined, '', 0, false];
+type Item = {
+  title: string;
+  data?: Item[];
+  value?: string;
+};
 
-const isPrimitive = (checkData: any) =>
-  typeof checkData !== 'object' || primitivesArray.includes(checkData);
+export const useTree = (data: Item[]) => {
+  const [activeIds, setActiveIds] = useState<string[]>([]);
 
-function renderValue(data: any, id: string) {
-  const isPrimitive = (checkData: any) =>
-    typeof checkData !== 'object' || primitivesArray.includes(checkData);
+  const onBranchClick = (e: React.MouseEvent) => {
+    const id = e.currentTarget.id;
+    setActiveIds((p) => {
+      if (p.includes(id)) {
+        return p.filter((item) => item !== id);
+      }
 
-  if (isPrimitive(data)) {
-    // return <Branch item={data} id={`${id}.${data}`} />;
-    return <p>{`${data}`}</p>;
-  }
+      return [...p, id];
+    });
+  };
 
-  if (Array.isArray(data)) {
-    const isArrayOfPrimitives = data.every((dataItem) => isPrimitive(dataItem));
-
-    if (isArrayOfPrimitives) {
-      return <p>{`${data}`}</p>;
+  function renderList(data: Item, id: string) {
+    if (Object.keys(data).includes('value')) {
+      return <div style={{ marginLeft: '10px' }}>{data.value}</div>;
     }
 
-    return data.map((dataItem) => {
-      if (isPrimitive(dataItem)) {
-        return <p key={`${id}.${dataItem}`}>{`${dataItem}`}</p>;
-      }
+    const dataItems = data.data;
 
-      return (
-        <ul key={`${id}.${data}`}>{renderValue(dataItem, `${id}.${data}`)}</ul>
-      );
-    });
+    if (!dataItems) {
+      return console.error('Your data has problems');
+    }
+
+    return (
+      <div style={{ marginLeft: '10px' }}>
+        {dataItems.map((item: Item, idx: number) => (
+          <>
+            <p
+              key={`${id}.${item.title}.${idx}`}
+              id={`${id}.${item.title}.${idx}`}
+              onClick={onBranchClick}
+            >
+              <CaretDownOutlined />
+              {item.title}
+            </p>
+            {activeIds.includes(`${id}.${item.title}.${idx}`) && (
+              <p>
+                {
+                  renderList(
+                    item,
+                    `${id}.${item.title}.${idx}`,
+                  ) as React.ReactNode
+                }
+              </p>
+            )}
+          </>
+        ))}
+      </div>
+    );
   }
 
-  if (typeof data === 'object') {
-    const keys = Object.keys(data);
-
-    return keys.map((key) => {
-      if (isPrimitive(data[key])) {
-        return <p key={`${id}.${key}`}>{`${data[key]}`}</p>;
-      }
-
-      return (
-        <p key={`${id}.${key}`}>
-          {key}: {renderValue(data[key], `${id}.${key}`)}
-        </p>
-      );
-    });
-  }
-}
-
-export const useTree = (data: any, id: string) => {
   return {
-    renderValue: renderValue,
+    List: (
+      <List
+        data={data}
+        renderList={renderList as (data: Item, id: string) => JSX.Element}
+      />
+    ),
   };
 };
