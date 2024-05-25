@@ -1,1 +1,67 @@
+p {
+  margin: 0;
+  padding: 0;
+}
 
+.root {
+  display: flex;
+  flex-direction: column;
+
+  width: 500px;
+}
+
+.renderWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 300ms;
+
+  margin-left: 20px;
+}
+
+.openRenderWrapper {
+  max-height: 6000px;
+
+  margin-left: 20px;
+}
+
+.listContainer {
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+
+  padding: 8px;
+}
+
+.listWrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.listTitle {
+  cursor: pointer;
+}
+
+.marker {
+  transform: rotate(-90deg);
+
+  transition-property: transform;
+  transition-duration: 300ms;
+}
+
+.markerActive {
+  transition-property: transform;
+  transition-duration: 300ms;
+
+  transform: rotate(0deg);
+}
+
+.renderListWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.renderTitle {
+  padding: 8px;
+  cursor: pointer;
+}
